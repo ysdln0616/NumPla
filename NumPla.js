@@ -119,7 +119,6 @@ let  queue = [
 
   function answer(){
     let tr = document.querySelectorAll(".main tr");
-    
     const h2 = document.querySelector("h2");
     if(check1()==false){
       h2.textContent = "おかしい";
@@ -141,6 +140,8 @@ let  queue = [
 
     // まず、総当たりを考える。
     all(tr);
+    //　人間っぽく
+    // solve(tr);
 
     h2.textContent = "おわり";
 
@@ -157,6 +158,10 @@ let  queue = [
     // console.log(Number(s));
     // console.log(a);
   }
+  // function solve(tr){
+
+
+  // }
 
   function all(tr){
     let che =true;
@@ -172,13 +177,10 @@ let  queue = [
             [tri,i,j]=back(tr,i,j);
           }
             continue;
-
-          
-          
         }
-        // if(Number(td[j].textContent)>0&&che==true){
-        //   continue;
-        // }
+        if(Number(td[j].textContent)>0&&che==true){
+          continue;
+        }
         
         che=true
         // console.log("(j,i)="+j+i);
@@ -203,11 +205,10 @@ let  queue = [
             //   tr[i-1].querySelectorAll("td")[8].click();
             // }
 
-
-
             [tri,i,j]=back(tr,i,j);
-            td[j].textContent=0;
+            td[j].textContent=null;
             td[j].click();
+            console.log(j)
             if(j>0){
               j=j-1;
             }else{
@@ -220,8 +221,6 @@ let  queue = [
             
           }
         }
-        let bi=i;
-        let bj=j;
       }
     }
   }
@@ -229,8 +228,8 @@ let  queue = [
   function back(tr,i,j){
   let n=2;
       if(j>0){
-        if(Number(tr[i].querySelectorAll("td")[j-1].textContent)==9||tr[i].querySelectorAll("td")[j-1].className=="clickdisable"){
-          tr[i].querySelectorAll("td")[j-1].textContent=0;
+        if(Number(tr[i].querySelectorAll("td")[j-1].textContent)==9){
+          tr[i].querySelectorAll("td")[j-1].textContent=null;
           tr[i].querySelectorAll("td")[j-1].click();
           [tri,i,j]=back(tr,i,j-1);
         }else{
@@ -239,10 +238,10 @@ let  queue = [
           // console.log("kkk"+tr[5].querySelectorAll("td")[1].textContent)
         }
       }else{
-        if(Number(tr[i-1].querySelectorAll("td")[n].textContent)==9||tr[i-1].querySelectorAll("td")[n].className=="clickdisable"){
-          tr[i-1].querySelectorAll("td")[n].textContent=0;
+        if(Number(tr[i-1].querySelectorAll("td")[n].textContent)==9){
+          tr[i-1].querySelectorAll("td")[n].textContent=null;
           tr[i-1].querySelectorAll("td")[n].click();
-          [tri,i,j]=back(tr,i-1,n-1)
+          [tri,i,j]=back(tr,i-1,n)
         }else{
           tr[i-1].querySelectorAll("td")[n].textContent=Number(tr[i-1].querySelectorAll("td")[n].textContent)+1;
           tr[i-1].querySelectorAll("td")[n].click();
