@@ -191,20 +191,6 @@ let  queue = [
             break;
           }
           if(k==9){
-            // return;
-
-            // console.log("(j,i)="+j+","+i);
-            // if(j>0){
-            //   tr[i].querySelectorAll("td")[j-1].textContent+=1;
-            //   tr[i].querySelectorAll("td")[j-1].textContent=Number(tr[i].querySelectorAll("td")[j-1].textContent);
-            //   tr[i].querySelectorAll("td")[j-1].click();
-            //   // td[]
-            // }else{
-            //   tr[i-1].querySelectorAll("td")[8].textContent+=1;
-            //   tr[i-1].querySelectorAll("td")[8].textContent=Number(tr[i-1].querySelectorAll("td")[8].textContent);
-            //   tr[i-1].querySelectorAll("td")[8].click();
-            // }
-
             [tri,i,j]=back(tr,i,j);
             td[j].textContent=null;
             td[j].click();
