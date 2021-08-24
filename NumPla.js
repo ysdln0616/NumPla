@@ -12,19 +12,16 @@ const question = [
   ];
 
 let  queue = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  ];
-// let array = [1,2,3,4,5,6,7,8,9];
-
-  
+    [1, 0, 0, 2, 0, 0, 4, 0, 8],
+    [2, 9, 4, 0, 8, 0, 6, 0, 3],
+    [0, 0, 0, 7, 3, 4, 0, 0, 0],
+    [8, 0, 2, 3, 0, 6, 0, 9, 0],
+    [9, 0, 0, 0, 1, 0, 0, 0, 4],
+    [0, 6, 0, 5, 0, 7, 1, 0, 2],
+    [0, 0, 0, 6, 5, 3, 0, 0, 0],
+    [3, 0, 6, 0, 2, 0, 5, 4, 7],
+    [5, 0, 1, 0, 0, 8, 0, 0, 6],
+  ];  
   // クリックされた要素を保持
   let place;
   
@@ -40,13 +37,13 @@ let  queue = [
         let td = document.createElement("td");
         td.onclick = mainClick;
         tr.appendChild(td);
-        // if (question[i][j] != 0) {
-        //   td.textContent = question[i][j];
-        //   td.classList.add("clickdisable");
-        // } else {
+        if (queue[i][j] != 0) {
+          td.textContent = queue[i][j];
+          td.classList.add("clickdisable");
+        } else {
           td.textContent = null;
           td.classList.add("clickenable");
-        // }
+        }
       }
       main.appendChild(tr);
     }
@@ -94,7 +91,6 @@ let  queue = [
         }
       }
     }
-
     for(let i=0;i<9;i++){
       for(let j=0;j<9;j++){
         for(let t=i-(i%3);t<i+3-(i%3);t++){
@@ -131,6 +127,7 @@ let  queue = [
       for(let j=0;j<9;j++){
         let td = tr[i].querySelectorAll("td");
         if(Number(td[j].textContent)!=0){
+          console.log("(i,j)="+i+j+td[j].textContent)
           td[j].classList=[];
           td[j].classList.add("clickdisable");
           console.log(td[j].className)
@@ -140,50 +137,21 @@ let  queue = [
 
     // まず、総当たりを考える。
     all(tr);
-    //　人間っぽく
-    // solve(tr);
-
     h2.textContent = "おわり";
-
-    // // 横
-    // let s="";
-    // let a=0;
-    // for(let k=0;k<9;k++){
-    //     s+=tr[k].textContent;
-    //     a+=Number(tr[k].textContent);
-    //     for(let j=0;j<9;j++){
-
-    //     }
-    // }
-    // console.log(Number(s));
-    // console.log(a);
   }
-  // function solve(tr){
-
-
-  // }
-
   function all(tr){
     let che =true;
-    let n=3
-    // let tc = tr[8].querySelectorAll("td");
-    // tc[0].click();
-    // tc[0].textContent=0;
+    let n=9
     for(let i=0;i<9;i++){
       for(let j=0;j<n;j++){
         let td = tr[i].querySelectorAll("td");
         if(td[j].className=="clickdisable"){
-          if(che==false){
-            [tri,i,j]=back(tr,i,j);
-          }
-            continue;
+          continue;
         }
         if(Number(td[j].textContent)>0&&che==true){
           continue;
         }
-        
         che=true
-        // console.log("(j,i)="+j+i);
         for(let k=1;k<10;k++){//入れる数字
           td[j].textContent = k;
           td[j].click();
@@ -191,54 +159,89 @@ let  queue = [
             break;
           }
           if(k==9){
-            [tri,i,j]=back(tr,i,j);
-            td[j].textContent=null;
-            td[j].click();
-            console.log(j)
+            che=false;
+            [tr,i,j,che]=back(tr,i,j,che);
             if(j>0){
               j=j-1;
             }else{
               i=i-1;
               j=n-1;
-              // break;
             }
             che=false;
-
-            
           }
         }
       }
     }
   }
 
-  function back(tr,i,j){
-  let n=2;
+
+
+
+  function back(tr,i,j,che){
+    let n=8;
+    console.log(i+j+tr[i].querySelectorAll("td")[j].className=="clickdisable")
+    if(tr[i].querySelectorAll("td")[j].className!="clickdisable"){
+       tr[i].querySelectorAll("td")[j].textContent=null;
+      tr[i].querySelectorAll("td")[j].click();
+    }
       if(j>0){
+        console.log(i)
+        console.log(Number(tr[i].querySelectorAll("td")[j-1].textContent))
         if(Number(tr[i].querySelectorAll("td")[j-1].textContent)==9){
-          tr[i].querySelectorAll("td")[j-1].textContent=null;
-          tr[i].querySelectorAll("td")[j-1].click();
-          [tri,i,j]=back(tr,i,j-1);
+          if(tr[i].querySelectorAll("td")[j-1].className!="clickdisable"){
+            tr[i].querySelectorAll("td")[j-1].textContent=null;
+            tr[i].querySelectorAll("td")[j-1].click();
+          }
+            [tr,i,j,che]=back(tr,i,j-1,che);  
+            return [tr,i,j,true];
         }else{
-          tr[i].querySelectorAll("td")[j-1].textContent=Number(tr[i].querySelectorAll("td")[j-1].textContent)+1;
-          tr[i].querySelectorAll("td")[j-1].click();
-          // console.log("kkk"+tr[5].querySelectorAll("td")[1].textContent)
+          if(tr[i].querySelectorAll("td")[j-1].className!="clickdisable"){
+            tr[i].querySelectorAll("td")[j-1].textContent=Number(tr[i].querySelectorAll("td")[j-1].textContent)+1;
+            if(check2(tr)==true){
+              return [tr,i,j,true];
+            }else{
+              [tr,i,j,che]=back(tr,i,j,che);
+              return [tr,i,j,true];
+            }
+          }else{
+            [tr,i,j,che]=back(tr,i,j-1,che);
+            return [tr,i,j,true];
+          }
+          
         }
       }else{
         if(Number(tr[i-1].querySelectorAll("td")[n].textContent)==9){
-          tr[i-1].querySelectorAll("td")[n].textContent=null;
-          tr[i-1].querySelectorAll("td")[n].click();
-          [tri,i,j]=back(tr,i-1,n)
+          if(tr[i-1].querySelectorAll("td")[n].className!="clickdisable"){
+            tr[i-1].querySelectorAll("td")[n].textContent=null;
+            tr[i-1].querySelectorAll("td")[n].click();
+          }
+            [tr,i,j,che]=back(tr,i-1,n,che);
+            return [tr,i,j,true];
         }else{
-          tr[i-1].querySelectorAll("td")[n].textContent=Number(tr[i-1].querySelectorAll("td")[n].textContent)+1;
-          tr[i-1].querySelectorAll("td")[n].click();
-          // console.log("jjj"+tr[5].querySelectorAll("td")[1].textContent)
+          if(tr[i-1].querySelectorAll("td")[n].className!="clickdisable"){
+            tr[i-1].querySelectorAll("td")[n].textContent=Number(tr[i-1].querySelectorAll("td")[n].textContent)+1;
+            if(check2(tr)==true){
+              return [tr,i,j,true];
+            }else{
+              [tr,i,j,che]=back(tr,i-1,n,che);
+              return [tr,i,j,true];
+            }
+          }else{
+            [tr,i,j,che]=back(tr,i-1,n-1,che);
+            return [tr,i,j,true];
+          }
         }
       }
-      return [tr,i,j];
+    // if(tr[i].querySelectorAll("td")[j].className=="clickdisable"){
+    //   if(j>0){
+    //     [tr,i,j,che]=back(tr,i,j-1,che); 
+    //   }else{
+    //     [tr,i,j,che]=back(tr,i-1,n,che);
+    //   }
+    // }
+    // return [tr,i,j,true];
 
   }
-
-
 
   function check2(tr){//入れていいかを決める
     let checkFlag = true;
@@ -322,5 +325,5 @@ let  queue = [
   //消す処理
   function remove() {
     place.textContent = null;
-    console.log(place);
+    // console.log(place);
   }
