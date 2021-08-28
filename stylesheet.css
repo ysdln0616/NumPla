@@ -13,6 +13,13 @@ main{
     /* color: #6091d3; */
     color: black;
 }
+.answer{
+    color: #6091d3;
+}
+.canSelect{
+    background-color: #6091d3;
+    opacity: 0.5;
+}
 table{
     border-collapse: collapse;
 }
