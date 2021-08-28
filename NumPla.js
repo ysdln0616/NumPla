@@ -112,7 +112,7 @@ let  queue = [
 
 
 
-  async function answer(){
+  async function answer(flag){
     const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     let tr = document.querySelectorAll(".main tr");
     const h2 = document.querySelector("h2");
@@ -135,21 +135,41 @@ let  queue = [
       }
     }
 
-    // まず、総当たりを考える。
+
+
     await _sleep(100);
-    all(tr);
+    console.log(flag)
+    if(flag=="m"){
+      // まず、総当たりを考える。
 
-
-    // 人間ぽく
-    // await _sleep(100);
-    // solve(tr);
+      // all(tr);
+    }else{
+      // 人間ぽく
+      // solve(tr);
+    }
   }
 
-  function solve(tr){
-    for(let k=1;k<2;k++){
-      for(let i=0;i<9;i++){
-        for(let j=0;j<9;j++){
 
+
+
+  // solveの候補
+  function canSelect(){
+
+  }
+
+
+  function solve(tr){
+    const h2 = document.querySelector("h2");
+    const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    for(let k=1;k<2;k++){//入れる数字
+      for(let i=0;i<3;i++){
+        let td = tr[i].querySelectorAll("td");
+        for(let j=0;j<3;j++){
+          if(td[j].className=="clickdisable"){
+            continue;
+          }
+          // td[j]=k;
+          // td[j].click();
         }
       }
     }
@@ -296,7 +316,18 @@ let  queue = [
   }
   
   //消す処理
-  function remove() {
-    place.textContent = null;
-    // console.log(place);
+  function remove(str) {
+    let tr = document.querySelectorAll(".main tr");
+    if(str=='p'){
+      place.textContent = null;
+    }else{
+      for(let i=0;i<3;i++){
+        let td = tr[i].querySelectorAll("td");
+        for(let j=0;j<3;j++){
+          if(td[j].className!="clickdisable"){
+            td[j].textContent=null;
+          }
+        }
+      }
+    }
   }

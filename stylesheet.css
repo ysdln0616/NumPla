@@ -85,11 +85,11 @@ table{
     height: 45px;
 }
 .check{
-    margin-right: 135px;
+    margin-right: 10px;
     border: 2px #6091d3 solid;
     border-radius: 10px;
     text-align: center;
-    font-size:30px;
-    width: 200px;
+    font-size:20px;
+    width: 100px;
     height: 45px;
 }
