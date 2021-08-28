@@ -47,7 +47,6 @@ let  queue = [
       }
       main.appendChild(tr);
     }
-  
     for (let i = 0; i < 9; i++) {
       let td = document.createElement("td");
       td.onclick = selectClick;
@@ -73,9 +72,9 @@ let  queue = [
     place.textContent = e.target.value;
   }
 
-  function check1(){
+  function check1(tr){
     let checkFlag = true;
-    let tr = document.querySelectorAll(".main tr");
+    // let tr = document.querySelectorAll(".main tr");
     for(let i=0;i<9;i++){
       for(let j=0;j<9;j++){
         for(let k=j+1;k<9;k++){
@@ -113,33 +112,52 @@ let  queue = [
 
 
 
-  function answer(){
+  async function answer(){
+    const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     let tr = document.querySelectorAll(".main tr");
     const h2 = document.querySelector("h2");
-    if(check1()==false){
+    let underNum =document.querySelectorAll(".select td");
+    if(check1(tr)==false){
       h2.textContent = "おかしい";
       return;
     }else{
       h2.textContent = "考え中";
     }
-
     for(let i=0;i<9;i++){
+      underNum[i].classList.add("clickdisable");
       for(let j=0;j<9;j++){
         let td = tr[i].querySelectorAll("td");
+        td[j].classList.add("clickdisable");
         if(Number(td[j].textContent)!=0){
-          console.log("(i,j)="+i+j+td[j].textContent)
           td[j].classList=[];
           td[j].classList.add("clickdisable");
-          console.log(td[j].className)
         }
       }
     }
 
     // まず、総当たりを考える。
+    await _sleep(100);
     all(tr);
-    h2.textContent = "おわり";
+
+
+    // 人間ぽく
+    // await _sleep(100);
+    // solve(tr);
   }
-  function all(tr){
+
+  function solve(tr){
+    for(let k=1;k<2;k++){
+      for(let i=0;i<9;i++){
+        for(let j=0;j<9;j++){
+
+        }
+      }
+    }
+
+  }
+  async function all(tr){
+    const h2 = document.querySelector("h2");
+    const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     let che =true;
     let n=9
     for(let i=0;i<9;i++){
@@ -155,56 +173,62 @@ let  queue = [
         for(let k=1;k<10;k++){//入れる数字
           td[j].textContent = k;
           td[j].click();
-          if(check2(tr)==true){
+          await _sleep(50);
+          if(check1(tr)==true){
             break;
           }
           if(k==9){
             che=false;
-            [tr,i,j,che]=back(tr,i,j,che);
+            // console.log([tr,i,j,che]);
+            [tr,i,j,che]=await back(tr,i,j,che);
+            // console.log([tr,i,j,che]);
             if(j>0){
               j=j-1;
             }else{
               i=i-1;
               j=n-1;
             }
-            che=false;
           }
         }
       }
     }
+    h2.textContent = "おわり";
   }
 
 
 
 
-  function back(tr,i,j,che){
+ async function back(tr,i,j,che){
+  const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  await _sleep(50);
     let n=8;
-    console.log(i+j+tr[i].querySelectorAll("td")[j].className=="clickdisable")
+    // console.log(i+j+tr[i].querySelectorAll("td")[j].className=="clickdisable")
     if(tr[i].querySelectorAll("td")[j].className!="clickdisable"){
        tr[i].querySelectorAll("td")[j].textContent=null;
       tr[i].querySelectorAll("td")[j].click();
     }
       if(j>0){
-        console.log(i)
-        console.log(Number(tr[i].querySelectorAll("td")[j-1].textContent))
+        // console.log(i)
+        // console.log(Number(tr[i].querySelectorAll("td")[j-1].textContent))
         if(Number(tr[i].querySelectorAll("td")[j-1].textContent)==9){
           if(tr[i].querySelectorAll("td")[j-1].className!="clickdisable"){
-            tr[i].querySelectorAll("td")[j-1].textContent=null;
             tr[i].querySelectorAll("td")[j-1].click();
+            tr[i].querySelectorAll("td")[j-1].textContent=null;
           }
-            [tr,i,j,che]=back(tr,i,j-1,che);  
+            [tr,i,j,che]=await back(tr,i,j-1,che);  
             return [tr,i,j,true];
         }else{
           if(tr[i].querySelectorAll("td")[j-1].className!="clickdisable"){
+            tr[i].querySelectorAll("td")[j-1].click();
             tr[i].querySelectorAll("td")[j-1].textContent=Number(tr[i].querySelectorAll("td")[j-1].textContent)+1;
-            if(check2(tr)==true){
+            if(check1(tr)==true){
               return [tr,i,j,true];
             }else{
-              [tr,i,j,che]=back(tr,i,j,che);
+              [tr,i,j,che]=await back(tr,i,j,che);
               return [tr,i,j,true];
             }
           }else{
-            [tr,i,j,che]=back(tr,i,j-1,che);
+            [tr,i,j,che]=await back(tr,i,j-1,che);
             return [tr,i,j,true];
           }
           
@@ -212,79 +236,28 @@ let  queue = [
       }else{
         if(Number(tr[i-1].querySelectorAll("td")[n].textContent)==9){
           if(tr[i-1].querySelectorAll("td")[n].className!="clickdisable"){
-            tr[i-1].querySelectorAll("td")[n].textContent=null;
             tr[i-1].querySelectorAll("td")[n].click();
+            tr[i-1].querySelectorAll("td")[n].textContent=null;
           }
-            [tr,i,j,che]=back(tr,i-1,n,che);
-            return [tr,i,j,true];
+          [tr,i,j,che]=await back(tr,i-1,n,che);
+          return [tr,i,j,true];
         }else{
           if(tr[i-1].querySelectorAll("td")[n].className!="clickdisable"){
+            tr[i-1].querySelectorAll("td")[n].click();
             tr[i-1].querySelectorAll("td")[n].textContent=Number(tr[i-1].querySelectorAll("td")[n].textContent)+1;
-            if(check2(tr)==true){
+            if(check1(tr)==true){
               return [tr,i,j,true];
             }else{
-              [tr,i,j,che]=back(tr,i-1,n,che);
+              [tr,i,j,che]=await back(tr,i-1,n,che);
               return [tr,i,j,true];
             }
           }else{
-            [tr,i,j,che]=back(tr,i-1,n-1,che);
+            [tr,i,j,che]=await back(tr,i-1,n-1,che);
             return [tr,i,j,true];
           }
         }
       }
-    // if(tr[i].querySelectorAll("td")[j].className=="clickdisable"){
-    //   if(j>0){
-    //     [tr,i,j,che]=back(tr,i,j-1,che); 
-    //   }else{
-    //     [tr,i,j,che]=back(tr,i-1,n,che);
-    //   }
-    // }
-    // return [tr,i,j,true];
-
   }
-
-  function check2(tr){//入れていいかを決める
-    let checkFlag = true;
-    for(let i=0;i<9;i++){
-      for(let j=0;j<9;j++){
-        for(let k=j+1;k<9;k++){
-          // 横
-          if(Number(tr[i].querySelectorAll("td")[j].textContent)>0&&tr[i].querySelectorAll("td")[j].textContent==tr[i].querySelectorAll("td")[k].textContent){
-            checkFlag=false;
-          }
-          // 縦
-          if(Number(tr[j].querySelectorAll("td")[i].textContent)>0&&tr[j].querySelectorAll("td")[i].textContent==tr[k].querySelectorAll("td")[i].textContent){
-            checkFlag=false;
-            break;
-          }
-        }
-      }
-    }
-
-    for(let i=0;i<9;i++){
-      for(let j=0;j<9;j++){
-        for(let t=i-(i%3);t<i+3-(i%3);t++){
-          for(let k=j-(j%3);k<j+3-(j%3);k++){
-            if(t==i&&k==j){
-              continue;
-            }
-            //3かける3のチェック
-            if(Number(tr[i].querySelectorAll("td")[j].textContent)>0&&tr[i].querySelectorAll("td")[j].textContent==tr[t].querySelectorAll("td")[k].textContent){
-              checkFlag=false;
-              break;
-            }
-          }
-        }
-      }
-    }
-    return checkFlag;
-  }
-
-
-
-
-
-
 
   // 正解判定
   function check() {
