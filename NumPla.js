@@ -228,7 +228,7 @@ const question = [
         h3.textContent=null;
         if(flag!=false){
           await _sleep(50);
-          choiceOne(tr,flag);
+          choiceOne(tr,flag,brank2);
         }
         break;
       }else{
@@ -256,13 +256,13 @@ const question = [
 
   let array = [];
 
-  function choiceOne(tr){
+  function choiceOne(tr,flag,brank2){
+    let brank=0;
     let array = [];
     for(let i=0;i<9;i++){
       array.push([]);
       let td = tr[i].querySelectorAll("td");
       for(let j=0;j<9;j++){
-        // console.log(td[j].className)
         if(td[j].className=="clickdisable"||td[j].className=="clickenable clickdisable answer"){
           array[i].push([])
           continue;
@@ -271,26 +271,69 @@ const question = [
         let num =[];
         for(let k=1;k<=9;k++){
           td[j].textContent=k;
-          // console.log(check1(tr))
           if(check1(tr)==true){
             num.push(k);
           }
           td[j].textContent=null;
         }
-        console.log(num)
-        console.log(num.length)
+        // console.log(num)
+        // console.log(num.length)
         array[i].push(num)
         if(num.length==1){
-          td[j].textContent=num[0];
+          td[j].textContent=num[0]
+          num[0]=[];
           td[j].classList.add("answer")
         }
-        // td[j].classList.add('memo');
-        console.log(td[j].className)
-        // td[j].textContent=num;
+      }
+      for(let j=0;j<9;j++){
+        let point=[j];
+        
+        for(let k=j+1;k<9;k++){
+          // console.log("i,j,k=",i,j,k)
+          if(array[i][j].length==array[i][k].length&&array[i][j].length>0){
+            // console.log("j",array[i][j].length)
+            // console.log("k",array[i][k].length)
+            let kflag=true;
+            for(let t=0;t<array[i][k].length;t++){
+              if(array[i][j][t]!=array[i][k][t]){
+                kflag=false;
+                break;
+              }
+              // c+=1;
+            // console.log("nnnnnn",i,j,k);
+            }
+            if(kflag==true){
+              // console.log("kkkkkkkkki,j,k=",i,j,k)
+              point.push(k)
+            }
+          }
+        }
+        if(point.length==array[i][j].length&&point.length>1){
+          console.log("i,j,k=",i,j)
+          console.log(point)
+          for(let j=0;j<9;j++){
+            if(array[i][j].length==0){
+              continue;
+            }
+            for(let k=0;k<point.length;k++){
+              if(point.indexOf(j)!=-1){
+                break;
+              }
+              console.log("jjj",array[i][point[k]][k])
+              console.log("hhh",i,j,array[i][j],array[i][j].indexOf(array[i][point[k]][k]))
+              if(array[i][j].indexOf(array[i][point[k]][k])!=-1){
+                var numB=array[i][j].splice(array[i][j].indexOf(array[i][point[k]][k]),1)
+              }
+            }
+          }
+        }
       }
     }
     console.log(array);
-    flag=false
+    brank=countBrank(tr);
+    if(brank2==brank){
+      flag=false;
+    }
     solve(tr,flag)
   }
 
