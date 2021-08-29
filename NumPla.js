@@ -23,18 +23,18 @@ const question = [
 //     [4, 2, 7, 3, 0, 0, 0, 0, 0],
 //   ]; 
 
-//297
-  // let  queue = [
-  //   [9, 4, 0, 5, 0, 7, 0, 1, 2],
-  //   [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 1, 0, 4, 0, 0, 0],
-  //   [4, 0, 0, 0, 0, 0, 0, 0, 1],
-  //   [0, 0, 0, 6, 0, 3, 0, 0, 0],
-  //   [0, 2, 0, 0, 0, 0, 0, 3, 0],
-  //   [0, 0, 6, 8, 0, 9, 3, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //   [8, 1, 0, 4, 0, 2, 0, 6, 7],
-  // ];  
+// // 297
+//   let  queue = [
+//     [9, 4, 0, 5, 0, 7, 0, 1, 2],
+//     [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//     [0, 0, 0, 1, 0, 4, 0, 0, 0],
+//     [4, 0, 0, 0, 0, 0, 0, 0, 1],
+//     [0, 0, 0, 6, 0, 3, 0, 0, 0],
+//     [0, 2, 0, 0, 0, 0, 0, 3, 0],
+//     [0, 0, 6, 8, 0, 9, 3, 0, 0],
+//     [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//     [8, 1, 0, 4, 0, 2, 0, 6, 7],
+//   ];  
 
   //254
   let  queue = [
@@ -87,7 +87,6 @@ const question = [
   
   // 問題パネルのマスが押された時の処理
   function mainClick(e) {
-    // console.log(e);
     if (place != undefined) {
       place.classList.remove("mainClick");
     }
@@ -97,7 +96,6 @@ const question = [
   
   // 数字選択のマスが押された時の処理
   function selectClick(e) {
-    // console.log(place.textContent);
     if(place.textContent == e.target.value){
       place.textContent = null;
     }else{
@@ -178,7 +176,7 @@ const question = [
     }else{
       // 人間ぽく
       let flag = true;
-      solve(tr,flag);
+      solve(tr,flag,array);
     }
 
     // await _sleep(100);
@@ -199,7 +197,7 @@ const question = [
   }
 
 
-  async function solve(tr,flag){
+  async function solve(tr,flag,array){
     let arrayi=[[],[],[],[],[],[],[],[],[],[]];
     let arrayj=[[],[],[],[],[],[],[],[],[],[]];
     const h2 = document.querySelector("h2");
@@ -219,12 +217,12 @@ const question = [
         fillLine(tr,arrayi,arrayj,k,count);
       }
       brank=countBrank(tr);
-      console.log(brank);
+      // console.log(brank);
       if(brank==0){
         break;
       }
       if(brank2==brank){
-        h2.textContent = "まだできません";
+        h2.textContent = "ランク1検証中";
         h3.textContent=null;
         if(flag!=false){
           await _sleep(50);
@@ -235,8 +233,26 @@ const question = [
         brank2=brank;
       }
     }
-    h3.textContent=null;
-    h2.textContent = "おわり";
+    if(flag==false){
+      h3.textContent=null;
+      for(let i=0;i<9;i++){
+        let td = tr[i].querySelectorAll("td");
+        for(let j=0;j<9;j++){
+          // console.log(array[i][j])
+          if(array[i][j].length){
+            td[j].textContent=("["+array[i][j]+"]")
+          }
+        }
+      }
+      if(brank2==brank){
+        h2.textContent = "まだできません";
+      }else{
+        h2.textContent = "おわり";
+      }
+    }else if(brank==0){
+      h2.textContent = "おわり";
+
+    }
   }
 
   function countBrank(tr){
@@ -256,7 +272,8 @@ const question = [
 
   let array = [];
 
-  function choiceOne(tr,flag,brank2){
+  async function choiceOne(tr,flag,brank2){
+    const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     let brank=0;
     let array = [];
     for(let i=0;i<9;i++){
@@ -276,8 +293,6 @@ const question = [
           }
           td[j].textContent=null;
         }
-        // console.log(num)
-        // console.log(num.length)
         array[i].push(num)
         if(num.length==1){
           td[j].textContent=num[0]
@@ -285,32 +300,26 @@ const question = [
           td[j].classList.add("answer")
         }
       }
+      //yoko
       for(let j=0;j<9;j++){
         let point=[j];
-        
         for(let k=j+1;k<9;k++){
-          // console.log("i,j,k=",i,j,k)
           if(array[i][j].length==array[i][k].length&&array[i][j].length>0){
-            // console.log("j",array[i][j].length)
-            // console.log("k",array[i][k].length)
             let kflag=true;
             for(let t=0;t<array[i][k].length;t++){
               if(array[i][j][t]!=array[i][k][t]){
                 kflag=false;
                 break;
               }
-              // c+=1;
-            // console.log("nnnnnn",i,j,k);
             }
             if(kflag==true){
-              // console.log("kkkkkkkkki,j,k=",i,j,k)
               point.push(k)
             }
           }
         }
         if(point.length==array[i][j].length&&point.length>1){
-          console.log("i,j,k=",i,j)
-          console.log(point)
+          // console.log("i,j,k=",i,j)
+          // console.log(point)
           for(let j=0;j<9;j++){
             if(array[i][j].length==0){
               continue;
@@ -319,11 +328,72 @@ const question = [
               if(point.indexOf(j)!=-1){
                 break;
               }
-              console.log("jjj",array[i][point[k]][k])
-              console.log("hhh",i,j,array[i][j],array[i][j].indexOf(array[i][point[k]][k]))
+              // console.log("jjj",array[i][point[k]][k])
+              // console.log("hhh",i,j,array[i][j],array[i][j].indexOf(array[i][point[k]][k]))
               if(array[i][j].indexOf(array[i][point[k]][k])!=-1){
                 var numB=array[i][j].splice(array[i][j].indexOf(array[i][point[k]][k]),1)
               }
+            }
+            if(array[i][j].length==1){
+              // console.log(i,j,"kkkkkkkkkkkkkkkkkkkk")
+              td[j].textContent=array[i][j]
+              td[j].classList.add("answer")
+              array[i][j]=[];
+            }
+          }
+        }
+      }
+    }
+    await _sleep(1000);
+    //tate
+    for(let i=0;i<9;i++){
+      
+      for(let j=0;j<9;j++){
+        let td = tr[j].querySelectorAll("td");
+        if(td[i].className=="clickdisable"||td[i].className=="clickenable clickdisable answer"){
+          continue;
+        }
+        let hpoint=[j];
+        for(let k=j+1;k<9;k++){
+          if(array[j][i].length==array[k][i].length&&array[j][i].length>0){
+            let hflag=true;
+            for(let t=0;t<array[j][i].length;t++){
+              if(array[j][i][t]!=array[k][i][t]){
+                hflag=false;
+                break;
+              }
+            }
+            if(hflag==true){
+              hpoint.push(k);
+            }
+          }
+        }
+        if(hpoint.length==array[j][i].length&&hpoint.length>1){
+          // console.log("i,j,k=",i,j)
+          // console.log(hpoint)
+          for(let j=0;j<9;j++){
+            if(array[j][i].length==0){
+              continue;
+            }
+            for(let k=0;k<hpoint.length;k++){
+              if(hpoint.indexOf(j)!=-1){
+                break;
+              }
+              // console.log("jjjjjjjjjj",array[hpoint[k]][i][k])
+              // console.log("hhhhhhhhhhh",i,j,array[j][i],array[j][i].indexOf(array[hpoint[k]][i][k]))
+              if(array[j][i].indexOf(array[hpoint[k]][i][k])!=-1){
+                var numB=array[j][i].splice(array[j][i].indexOf(array[hpoint[k]][i][k]),1)
+              }
+            }
+            if(array[j][i].length==1&&Number(array[j][i][0])>0){
+              let td = tr[j].querySelectorAll("td");
+              // console.log(i,j,"tttttttttttttttttt")
+              // console.log(array[j][i])
+              // await _sleep(1000);
+              td[i].textContent=array[j][i]
+              td[i].classList.add("answer")
+              array[j][i]=[];
+              // await _sleep(1000);
             }
           }
         }
@@ -334,7 +404,7 @@ const question = [
     if(brank2==brank){
       flag=false;
     }
-    solve(tr,flag)
+    solve(tr,flag,array)
   }
 
   function canSelect(tr,k){
