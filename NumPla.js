@@ -169,13 +169,13 @@ const question = [
       }
     }
 
-    await _sleep(100);
+    // await _sleep(100);
     if(flag=="m"){
       // まず、総当たりを考える。
       all(tr);
     }else{
       // 人間ぽく
-      let flag = true;
+      let flag = 0;
       solve(tr,flag,array);
     }
 
@@ -206,7 +206,7 @@ const question = [
     let brank=0;
     let brank2=0;
     brank=countBrank(tr);
-    console.log(brank);
+    // console.log(brank);
     while(brank>0){
       for(let k=1;k<=9;k++){//入れる数字
         h3.textContent=("k="+k);
@@ -223,25 +223,22 @@ const question = [
       if(brank2==brank){
         h2.textContent = "ランク1検証中";
         h3.textContent=null;
-        if(flag!=false){
-          await _sleep(50);
-          choiceOne(tr,flag,brank2);
+        if(flag==0){
+          [flag,array]=await choiceOne(tr,flag,brank2);
+          
+        }else{
+          break;
         }
-        break;
+        
       }else{
         brank2=brank;
+        flag=0;
       }
     }
-    if(flag==false){
-      h3.textContent=null;
-      for(let i=0;i<9;i++){
-        let td = tr[i].querySelectorAll("td");
-        for(let j=0;j<9;j++){
-          if(array[i][j].length){
-            td[j].textContent=("["+array[i][j]+"]")
-          }
-        }
-      }
+    if(flag<2){
+      h2.textContent="ランク3検証中";
+      flag=await rankup3(tr,array);
+      brank=countBrank(tr);
       if(brank2==brank){
         h2.textContent = "まだできません";
       }else{
@@ -332,12 +329,12 @@ const question = [
                 break;
               }
               if(array[i][j].indexOf(array[i][point[k]][k])!=-1){
-                await _sleep(50);
+                // await _sleep(50);
                 var numB=array[i][j].splice(array[i][j].indexOf(array[i][point[k]][k]),1)
               }
             }
             if(array[i][j].length==1){
-              await _sleep(50);
+              // await _sleep(50);
               td[j].textContent=array[i][j]
               td[j].classList.add("answer")
               array[i][j]=[];
@@ -379,12 +376,12 @@ const question = [
                 break;
               }
               if(array[j][i].indexOf(array[hpoint[k]][i][k])!=-1){
-                await _sleep(50);
+                // await _sleep(50);
                 var numB=array[j][i].splice(array[j][i].indexOf(array[hpoint[k]][i][k]),1)
               }
             }
             if(array[j][i].length==1&&Number(array[j][i][0])>0){
-              await _sleep(50);
+              // await _sleep(50);
               let td = tr[j].querySelectorAll("td");
               td[i].textContent=array[j][i]
               td[i].classList.add("answer")
@@ -429,7 +426,7 @@ const question = [
               }
             }
             if(samei==true){
-              console.log(z,i,j,num,tnumi,tnumj)
+              // console.log(z,i,j,num,tnumi,tnumj)
               for(let r=0;r<9;r++){
                 if(tnumj.includes(r)){
                   continue;
@@ -442,7 +439,7 @@ const question = [
             }
 
             if(samej==true){
-              console.log(z,i,j,num,tnumi,tnumj)
+              // console.log(z,i,j,num,tnumi,tnumj)
               for(let r=0;r<9;r++){
                 if(tnumi.includes(r)){
                   continue;
@@ -458,13 +455,121 @@ const question = [
       }
     }
 
-    console.log(array);
-    brank=countBrank(tr);
+    // console.log(array);
+    brank=await countBrank(tr);
     if(brank2==brank){
-      flag=false;
+      flag=1;
     }
-    solve(tr,flag,array)
-    // solve(tr,false,array)
+    return [flag,array];
+  }
+
+  async function rankup3(tr,array){
+    const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    let ri=-1;
+    let rj=-1;
+    let flag =0;
+    for(let i=0;i<9;i++){
+      let td = tr[i].querySelectorAll("td");
+      for(let j=0;j<9;j++){
+        if(array[i][j].length==2){
+          // console.log(i,j,array[i][j],array[i][j].length)
+          ri=i;
+          rj=j;
+
+          let array1=[];
+          let array2=[];
+          for(let I=0;I<9;I++){
+            array1.push([])
+            array2.push([])
+            for(let J=0;J<9;J++){
+              array1[I].push([])
+              array2[I].push([])
+            }
+          }
+          
+          for(let a=0;a<array[i][j].length;a++){
+            td[j].textContent=array[i][j][a]
+            td[j].classList.add("answer")
+            // await _sleep(50);
+
+            let brank=0;
+            let brank2=0;
+            brank=countBrank(tr);
+            // console.log(brank)
+            while(brank>0){
+              for(let k=1;k<=9;k++){//入れる数字
+                let count=0;
+                // await _sleep(50);
+                [count,arrayi,arrayj]=canSelect(tr,k);
+                // await _sleep(50);
+                fillLine(tr,arrayi,arrayj,k,count);
+              }
+              brank=countBrank(tr);
+              if(brank==0){
+                return 1;
+              }
+              if(brank2==brank){
+                if(flag==0){
+                  // await _sleep(50);
+                  [flag,array]=await choiceOne(tr,flag,brank2);
+                }else{
+                  break;
+                }
+              }else{
+                brank2=brank;
+                flag=0;
+              }
+            }
+
+            for(let I=0;I<9;I++){
+              let td = tr[I].querySelectorAll("td");
+              for(let J=0;J<9;J++){
+                if(td[J].className=="clickdisable"){
+                  continue;
+                }
+                if(a==0){
+                  if(Number(td[J].textContent)>0){
+                    array1[I][J]=Number(td[J].textContent)
+                  }else{
+                    continue;
+                  }
+                }else{
+                  if(Number(td[J].textContent)>0){
+                    if(array1[I][J]>0){
+                      // console.log(I,J,"pppp")
+                      if(array1[I][J]!=td[J].textContent){
+                        array1[I][J]=[]
+                      }
+                    }
+                    array2[I][J]=Number(td[J].textContent)
+                  }else{
+                    array1[I][J]=[];
+                    continue;
+                  }
+                  
+                }
+                // console.log(I,J,array[I][J],array[I][J].length)
+                if(array[I][J].length>0){
+                  td[J].textContent=null;
+                  td[J].classList.remove("answer");
+                }
+              }
+            }
+          }
+          for(let I=0;I<9;I++){
+            let td = tr[I].querySelectorAll("td");
+            for(let J=0;J<9;J++){
+              if(array1[I][J]>0){
+                td[J].textContent=array1[I][J]
+                td[J].className="clickenable clickdisable answer"
+              }
+            }
+          }
+        }
+      }
+    }
+    return 2;
+
   }
 
   function canSelect(tr,k){
@@ -572,7 +677,7 @@ const question = [
           td[j].classList.add('answer')
           td[j].textContent = k;
           td[j].click();
-          await _sleep(50);
+          // await _sleep(50);
           if(check1(tr)==true){
             break;
           }
@@ -594,10 +699,9 @@ const question = [
 
 
 
-
  async function back(tr,i,j,che){
   const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-  await _sleep(50);
+  // await _sleep(50);
     let n=8;
     // console.log(i+j+tr[i].querySelectorAll("td")[j].className=="clickdisable")
     if(tr[i].querySelectorAll("td")[j].className!="clickdisable"){
