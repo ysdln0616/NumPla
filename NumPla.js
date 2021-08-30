@@ -23,31 +23,31 @@ const question = [
 //     [4, 2, 7, 3, 0, 0, 0, 0, 0],
 //   ]; 
 
-// // 297
-//   let  queue = [
-//     [9, 4, 0, 5, 0, 7, 0, 1, 2],
-//     [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//     [0, 0, 0, 1, 0, 4, 0, 0, 0],
-//     [4, 0, 0, 0, 0, 0, 0, 0, 1],
-//     [0, 0, 0, 6, 0, 3, 0, 0, 0],
-//     [0, 2, 0, 0, 0, 0, 0, 3, 0],
-//     [0, 0, 6, 8, 0, 9, 3, 0, 0],
-//     [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//     [8, 1, 0, 4, 0, 2, 0, 6, 7],
-//   ];  
-
-  //254
+// 297
   let  queue = [
-    [0, 0, 0, 4, 0, 0, 0, 0, 8],
-    [0, 0, 0, 0, 0, 0, 9, 4, 1],
-    [0, 0, 1, 0, 0, 8, 7, 0, 3],
-    [1, 8, 7, 0, 0, 0, 0, 0, 0],
-    [6, 0, 0, 0, 0, 0, 0, 0, 5],
-    [0, 0, 0, 0, 0, 0, 8, 1, 7],
-    [7, 0, 8, 3, 0, 0, 4, 0, 0],
-    [9, 6, 4, 0, 0, 0, 0, 0, 0],
-    [3, 0, 0, 0, 0, 7, 0, 0, 0],
+    [9, 4, 0, 5, 0, 7, 0, 1, 2],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 4, 0, 0, 0],
+    [4, 0, 0, 0, 0, 0, 0, 0, 1],
+    [0, 0, 0, 6, 0, 3, 0, 0, 0],
+    [0, 2, 0, 0, 0, 0, 0, 3, 0],
+    [0, 0, 6, 8, 0, 9, 3, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [8, 1, 0, 4, 0, 2, 0, 6, 7],
   ];  
+
+  // //254
+  // let  queue = [
+  //   [0, 0, 0, 4, 0, 0, 0, 0, 8],
+  //   [0, 0, 0, 0, 0, 0, 9, 4, 1],
+  //   [0, 0, 1, 0, 0, 8, 7, 0, 3],
+  //   [1, 8, 7, 0, 0, 0, 0, 0, 0],
+  //   [6, 0, 0, 0, 0, 0, 0, 0, 5],
+  //   [0, 0, 0, 0, 0, 0, 8, 1, 7],
+  //   [7, 0, 8, 3, 0, 0, 4, 0, 0],
+  //   [9, 6, 4, 0, 0, 0, 0, 0, 0],
+  //   [3, 0, 0, 0, 0, 7, 0, 0, 0],
+  // ];  
 
   // クリックされた要素を保持
   let place;
@@ -213,11 +213,10 @@ const question = [
         let count=0;
         // await _sleep(50);
         [count,arrayi,arrayj]=canSelect(tr,k);
-        // await _sleep(100);
+        // await _sleep(50);
         fillLine(tr,arrayi,arrayj,k,count);
       }
       brank=countBrank(tr);
-      // console.log(brank);
       if(brank==0){
         break;
       }
@@ -238,7 +237,6 @@ const question = [
       for(let i=0;i<9;i++){
         let td = tr[i].querySelectorAll("td");
         for(let j=0;j<9;j++){
-          // console.log(array[i][j])
           if(array[i][j].length){
             td[j].textContent=("["+array[i][j]+"]")
           }
@@ -250,6 +248,7 @@ const question = [
         h2.textContent = "おわり";
       }
     }else if(brank==0){
+      h3.textContent=null
       h2.textContent = "おわり";
 
     }
@@ -284,7 +283,6 @@ const question = [
           array[i].push([])
           continue;
         }
-        td[j].click();
         let num =[];
         for(let k=1;k<=9;k++){
           td[j].textContent=k;
@@ -296,12 +294,19 @@ const question = [
         array[i].push(num)
         if(num.length==1){
           td[j].textContent=num[0]
-          num[0]=[];
+          for(let s=0;s<j;s++){
+            if(array[i][s].includes(num[0])){
+              let aa = array[i][s].findIndex((element)=>element==num[0])
+              array[i][s].splice(aa,1)
+            }
+          }
+          num=[];
+          array[i][j]=[];
           td[j].classList.add("answer")
         }
       }
-      //yoko
       for(let j=0;j<9;j++){
+      //yoko
         let point=[j];
         for(let k=j+1;k<9;k++){
           if(array[i][j].length==array[i][k].length&&array[i][j].length>0){
@@ -318,8 +323,6 @@ const question = [
           }
         }
         if(point.length==array[i][j].length&&point.length>1){
-          // console.log("i,j,k=",i,j)
-          // console.log(point)
           for(let j=0;j<9;j++){
             if(array[i][j].length==0){
               continue;
@@ -328,14 +331,13 @@ const question = [
               if(point.indexOf(j)!=-1){
                 break;
               }
-              // console.log("jjj",array[i][point[k]][k])
-              // console.log("hhh",i,j,array[i][j],array[i][j].indexOf(array[i][point[k]][k]))
               if(array[i][j].indexOf(array[i][point[k]][k])!=-1){
+                await _sleep(50);
                 var numB=array[i][j].splice(array[i][j].indexOf(array[i][point[k]][k]),1)
               }
             }
             if(array[i][j].length==1){
-              // console.log(i,j,"kkkkkkkkkkkkkkkkkkkk")
+              await _sleep(50);
               td[j].textContent=array[i][j]
               td[j].classList.add("answer")
               array[i][j]=[];
@@ -344,11 +346,10 @@ const question = [
         }
       }
     }
-    await _sleep(1000);
-    //tate
+
     for(let i=0;i<9;i++){
-      
       for(let j=0;j<9;j++){
+        // tate
         let td = tr[j].querySelectorAll("td");
         if(td[i].className=="clickdisable"||td[i].className=="clickenable clickdisable answer"){
           continue;
@@ -369,8 +370,6 @@ const question = [
           }
         }
         if(hpoint.length==array[j][i].length&&hpoint.length>1){
-          // console.log("i,j,k=",i,j)
-          // console.log(hpoint)
           for(let j=0;j<9;j++){
             if(array[j][i].length==0){
               continue;
@@ -379,32 +378,93 @@ const question = [
               if(hpoint.indexOf(j)!=-1){
                 break;
               }
-              // console.log("jjjjjjjjjj",array[hpoint[k]][i][k])
-              // console.log("hhhhhhhhhhh",i,j,array[j][i],array[j][i].indexOf(array[hpoint[k]][i][k]))
               if(array[j][i].indexOf(array[hpoint[k]][i][k])!=-1){
+                await _sleep(50);
                 var numB=array[j][i].splice(array[j][i].indexOf(array[hpoint[k]][i][k]),1)
               }
             }
             if(array[j][i].length==1&&Number(array[j][i][0])>0){
+              await _sleep(50);
               let td = tr[j].querySelectorAll("td");
-              // console.log(i,j,"tttttttttttttttttt")
-              // console.log(array[j][i])
-              // await _sleep(1000);
               td[i].textContent=array[j][i]
               td[i].classList.add("answer")
               array[j][i]=[];
-              // await _sleep(1000);
             }
           }
         }
       }
     }
+
+
+    //3,3
+    for(let z=1;z<=9;z++){
+      for(let i=0;i<9;i+=3){
+        for(let j=0;j<9;j+=3){
+          let num = 0;
+          let tnumi=[];
+          let tnumj=[];
+          for(let t=i;t<i+3;t++){
+            let td = tr[t].querySelectorAll("td")
+            for(let k=j;k<j+3;k++){
+              if(td[k].className=="clickdisable"||td[k].className=="clickenable clickdisable answer"){
+                continue;
+              }
+              if(array[t][k].includes(z)){
+                num+=1;
+                tnumi.push(t);
+                tnumj.push(k);
+              }
+            }
+          }
+          if(num>0&&num<3){
+            let samei=true;
+            let samej=true;
+            let tnum=tnumi.length;
+            for(let r=1;r<tnum;r++){
+              if(tnumi[0]!=tnumi[r]){
+                samei=false;
+              }
+              if(tnumj[0]!=tnumj[r]){
+                samej=false
+              }
+            }
+            if(samei==true){
+              console.log(z,i,j,num,tnumi,tnumj)
+              for(let r=0;r<9;r++){
+                if(tnumj.includes(r)){
+                  continue;
+                }
+                if(array[tnumi[0]][r].includes(z)){
+                  let tt = array[tnumi[0]][r].findIndex((element)=>element==z)
+                  array[tnumi[0]][r].splice(tt,1)
+                }
+              }
+            }
+
+            if(samej==true){
+              console.log(z,i,j,num,tnumi,tnumj)
+              for(let r=0;r<9;r++){
+                if(tnumi.includes(r)){
+                  continue;
+                }
+                if(array[r][tnumj[0]].includes(z)){
+                  let tt = array[r][tnumj[0]].findIndex((element)=>element==z)
+                  array[r][tnumj[0]].splice(tt,1)
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
     console.log(array);
     brank=countBrank(tr);
     if(brank2==brank){
       flag=false;
     }
     solve(tr,flag,array)
+    // solve(tr,false,array)
   }
 
   function canSelect(tr,k){
@@ -430,7 +490,7 @@ const question = [
     return [count,arrayi,arrayj];
   }
 
-  function fillLine(tr,arrayi,arrayj,k,count){
+  async function fillLine(tr,arrayi,arrayj,k,count){
     let checkFlag = true;
     for(let i=0;i<count;i++){
       for(let j=0;j<count;j++){
